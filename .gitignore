@@ -1,0 +1,12 @@
+# Bytecode and cache
+__pycache__/
+
+# Virtual environments
+.venv/
+
+# Git / VS Code / IDE stuff
+.git/
+.vscode/
+.idea/
+
+
