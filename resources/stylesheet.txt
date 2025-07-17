@@ -4,19 +4,29 @@ QWidget {
 }
 
 QPushButton {
-    background-color: #97b1c9;
-    color: black;
+    padding-right: 40px;
+    background-color: #0d1f30ff;
+    color: white;
     border-radius: 4px;
     padding: 5px;
-    border: 1px solid #000;
+    border: 1px solid #8cb1c7ff;
+    font-weight: bold;
 }
 
 QPushButton:hover { 
-    background-color: #bfdbf5; 
+    background-color: #2c5780ff; 
 }
 
 QPushButton:pressed { 
-    background-color: #77a1c7; 
+    background-color: #020c16ff; 
+}
+
+QPushButton::menu-indicator {
+    subcontrol-origin: padding;
+    subcontrol-position: right center;
+    padding-right: 24px; 
+    width: 12px;
+    height: 12px;
 }
 
 QLabel { 
@@ -25,16 +35,15 @@ QLabel {
 
 QComboBox {
     color: #000;
-    background-color: #b5bdc4;
+    background-color: #8bc0eeff;
     padding: 6px;
     font-weight: bold;
 }
 
 QComboBox QAbstractItemView {
-    background-color: #b5bdc4;
+    background-color: #8bc0eeff;
     color: #000;
-    border-radius: 8px;
-    selection-background-color: #4a6b6f;
+    selection-background-color: #2e8791ff;
     selection-color: #e0ffff;
 }
 
@@ -47,4 +56,30 @@ WaveformCanvas {
     background-color: #ffffff;
     border-top: 2px solid #b05a5a;  /* muted red */
     border-bottom: 2px solid #5a7ab0;  /* muted blue */
+}
+
+QMenu {
+    background-color: #2f4047;      /* Dark slate background */
+    border: 1px solid #4a5a66;     /* Muted border */
+    padding: 5px;
+    color: #ffffff;                 /* White text */
+    font-weight: normal;
+    border: 1px solid #8cb1c7ff;
+}
+
+QMenu::item {
+    padding: 6px 20px 6px 20px;    /* Top, right, bottom, left padding */
+    background-color: transparent;
+    border: none;
+}
+
+QMenu::item:selected {
+    background-color: #94e3ff;      /* Light blue highlight on hover */
+    color: #000000;                 /* Black text on highlight */
+}
+
+QMenu::separator {
+    height: 1px;
+    background: #4a5a66;
+    margin: 5px 10px 5px 10px;
 }
