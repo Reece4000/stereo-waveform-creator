@@ -1,13 +1,9 @@
-import numpy as np
-from PySide6.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QHBoxLayout, 
-                               QFileDialog, QMessageBox, QMenu)
-from PySide6.QtGui import QIcon, QAction
 from src.waveform_canvas import WaveformCanvas
+from PySide6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QFileDialog, QMessageBox, QMenu
+from PySide6.QtGui import QIcon, QAction
+import numpy as np
 import wave
 import struct
-
-# stereo_waveform_creator
-# A simple tool for creating stereo single cycle waveforms. Supports exporting to wav, loading of existing wav files from disk, and a few additional functions
 
 
 def show_error_dialog(parent, message, title="Error"):
@@ -27,15 +23,18 @@ class WaveformCreator(QWidget):
         with open("styles/standard.qss") as f:
             self.stylesheet = f.read()
             self.setStyleSheet(self.stylesheet)
+            
+        self.waveform_presets = [
+            "Sine", "Triangle", "Saw Up", "Saw Down", "Square", 
+            "White Noise", "Sinc", "Pyramid", "PWM", "Ellipsoid", 
+            "Tangent", "Exponential"
+        ]
 
         self.num_samples = 674  # C2
         self.left_samples = np.zeros(self.num_samples, dtype=np.float32)
         self.right_samples = np.zeros(self.num_samples, dtype=np.float32)
-
         self.top_canvas = WaveformCanvas(self.left_samples, "left", self.left_changed, color=(150, 80, 80))
         self.bottom_canvas = WaveformCanvas(self.right_samples, "right", self.right_changed, color=(70, 140, 140))
-
-        # --- Controls between waveforms ---
         mid_controls_layout = QHBoxLayout()
 
         def add_btn(label, callback):
@@ -49,26 +48,19 @@ class WaveformCreator(QWidget):
 
         self.presets_button = QPushButton("Presets")
         self.presets_menu = QMenu()
-
-        # List of presets
-        presets = ["Sine", "Triangle", "Saw Up", "Saw Down", "Square", "White Noise", "Sinc",
-                   "Pyramid", "PWM", "Ellipsoid", "Tangent", "Exponential"]
-
-        for preset in presets:
+        self.presets_menu.setStyleSheet(self.stylesheet)
+        self.presets_button.setMenu(self.presets_menu)
+        mid_controls_layout.addWidget(self.presets_button)
+        for preset in self.waveform_presets:
             action = QAction(preset, self)
             action.triggered.connect(lambda checked, p=preset: self.apply_preset(p))
             self.presets_menu.addAction(action)
-        self.presets_menu.setStyleSheet(self.stylesheet)
-
-        self.presets_button.setMenu(self.presets_menu)
-        mid_controls_layout.addWidget(self.presets_button)
 
         # --- Layout ---
         wave_layout = QVBoxLayout()
         wave_layout.addWidget(self.top_canvas, stretch=1)
         wave_layout.addLayout(mid_controls_layout)
         wave_layout.addWidget(self.bottom_canvas, stretch=1)
-
         self.setLayout(wave_layout)
         self.resize(800, 500)
 
@@ -88,11 +80,9 @@ class WaveformCreator(QWidget):
 
                 raw_data = wf.readframes(n_frames)
 
-            # Number of samples per channel
-            total_samples = n_frames
             max_channels = min(n_channels, 2)
 
-            # Convert raw bytes to integers
+            # raw bytes -> integers
             if sample_width == 1:
                 fmt = f'{n_frames * n_channels}B'
                 data = np.array(struct.unpack(fmt, raw_data), dtype=np.uint8)
@@ -135,7 +125,6 @@ class WaveformCreator(QWidget):
 
             self.left_samples[:] = left
             self.right_samples[:] = right
-
             self.top_canvas.update()
             self.bottom_canvas.update()
 
@@ -152,13 +141,8 @@ class WaveformCreator(QWidget):
         if file_path:
             samplerate = 44100
             sampwidth = 2  # 16-bit PCM
-
-            # Check if right channel has valid data
-            is_stereo = (
-                self.right_samples is not None and
-                np.any(self.right_samples)
-            )
-
+            is_stereo = (self.right_samples is not None and np.any(self.right_samples))
+            
             if is_stereo:
                 frames = np.stack([self.left_samples, self.right_samples], axis=-1)
                 nchannels = 2

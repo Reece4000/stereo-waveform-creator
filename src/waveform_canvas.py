@@ -88,12 +88,9 @@ class WaveformCanvas(QFrame):
         smooth_noise /= np.max(np.abs(smooth_noise))
         smooth_noise *= 0.3
         
-        # Add perturbation in-place without replacing the arrays (preserving references)
+        # Add perturbation in-place 
         self.samples += smooth_noise
-        
-        # Clip samples in-place
         np.clip(self.samples, -1, 1, out=self.samples)
-
         self.update()
 
     def set_samples(self, samples):
@@ -103,8 +100,6 @@ class WaveformCanvas(QFrame):
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
-
-        # Dimensions and margins
         w = self.width()
         h = self.height()
 
@@ -115,13 +110,11 @@ class WaveformCanvas(QFrame):
         plot_height = h - margin_bottom - margin_top
         mid_y = margin_top + plot_height // 2
 
-        # Background
-        painter.fillRect(self.rect(), QColor(120, 120, 120, 127))
+        painter.fillRect(self.rect(), QColor(120, 120, 120, 127))  # bg
 
-        # --- Gridlines and Ticks ---
         grid_pen = QPen(QColor(80, 80, 80, 100), 1, Qt.DashLine)
         painter.setPen(grid_pen)
-
+        
         # Y gridlines at -1.0, -0.5, 0.0, 0.5, 1.0
         y_values = [-1.0, -0.5, 0.0, 0.5, 1.0]
         for val in y_values:
@@ -143,7 +136,7 @@ class WaveformCanvas(QFrame):
         # --- Labels ---
         painter.setPen(QColor(20, 20, 20))
 
-        right_padding = 5  # pixels padding from right edge
+        right_padding = 5  
         font_metrics = painter.fontMetrics()
         for val in y_values:
             y = int(mid_y - val * (plot_height / 2))
