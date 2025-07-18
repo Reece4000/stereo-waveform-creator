@@ -5,7 +5,7 @@ QWidget {
 
 QPushButton {
     padding-right: 40px;
-    background-color: #0d1f30ff;
+    background-color: #0a3945;
     color: white;
     border-radius: 4px;
     padding: 5px;
@@ -14,11 +14,11 @@ QPushButton {
 }
 
 QPushButton:hover { 
-    background-color: #2c5780ff; 
+    background-color: #0e5466;
 }
 
 QPushButton:pressed { 
-    background-color: #020c16ff; 
+    background-color: #002129;
 }
 
 QPushButton::menu-indicator {

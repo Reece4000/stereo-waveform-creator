@@ -24,7 +24,7 @@ class WaveformCreator(QWidget):
 
         self.setWindowTitle("Stereo Waveform Creator")
         self.setWindowIcon(QIcon("resources/icon.png"))
-        with open("resources/stylesheet.txt") as f:
+        with open("styles/standard.qss") as f:
             self.stylesheet = f.read()
             self.setStyleSheet(self.stylesheet)
 
@@ -51,7 +51,8 @@ class WaveformCreator(QWidget):
         self.presets_menu = QMenu()
 
         # List of presets
-        presets = ["Sine", "Triangle", "Saw", "Square", "White Noise"]
+        presets = ["Sine", "Triangle", "Saw Up", "Saw Down", "Square", "White Noise", "Sinc",
+                   "Pyramid", "PWM", "Ellipsoid", "Tangent", "Exponential"]
 
         for preset in presets:
             action = QAction(preset, self)
@@ -145,7 +146,6 @@ class WaveformCreator(QWidget):
         file_path, _ = QFileDialog.getOpenFileName(self, "Load Waveform", "", "WAV files (*.wav)")
         if file_path:
             self.load_waveform_from_wav(file_path)
-            
 
     def export_wav(self):
         file_path, _ = QFileDialog.getSaveFileName(self, "Export as WAV", "", "WAV files (*.wav)")
@@ -183,19 +183,63 @@ class WaveformCreator(QWidget):
 
         if preset == "Sine":
             waveform = np.sin(2 * np.pi * t)
+
         elif preset == "Triangle":
+            # Full cycle triangle wave
             waveform = 2 * np.abs(2 * (t % 1) - 1) - 1
-        elif preset == "Saw":
+
+        elif preset == "Saw Up":
             waveform = 2 * (t % 1) - 1
+
+        elif preset == "Saw Down":
+            waveform = 1 - 2 * (t % 1)
+
         elif preset == "Square":
             waveform = np.sign(np.sin(2 * np.pi * t))
+
         elif preset == "White Noise":
             waveform = np.random.uniform(-1, 1, self.num_samples)
+
+        elif preset == "Sinc":
+            # Windowed to one cycle by 8-lobe width
+            waveform = np.sinc(8 * (t - 0.5))
+
+        elif preset == "Pyramid":
+            steps = 10  # Must be even
+            half = steps // 2
+            up = np.linspace(-1, 1, half + 1)
+            down = np.linspace(1, -1, half + 1)[1:]  # remove duplicate peak
+            stair = np.concatenate((up, down))  # total = steps
+            indices = np.floor(t * steps).astype(int) % steps
+            waveform = stair[indices]
+
+        elif preset == "PWM":
+            duty_cycle = 0.2  # range: 0 < dc < 1
+            waveform = np.where((t % 1) < duty_cycle, 1.0, -1.0)
+
+        elif preset == "Ellipsoid":
+            # Symmetric ellipsoid arc covering full cycle
+            x = 2 * (t - 0.5)  # range [-1, 1]
+            waveform = np.sqrt(np.clip(1 - x ** 2, 0, 1)) * 2 - 1  # scale to [-1, 1]
+
+        elif preset == "Tangent":
+            waveform = np.tan(2 * np.pi * t)
+            waveform = np.clip(waveform, -1, 1)
+
+        elif preset == "Exponential":
+            # Rising then falling exponential over full cycle
+            half = self.num_samples // 2
+            rise = np.exp(np.linspace(0, 4, half, endpoint=False))
+            fall = np.exp(np.linspace(4, 0, self.num_samples - half))
+            waveform = np.concatenate((rise, fall))
+            waveform = waveform / np.max(waveform)  # normalise to [0, 1]
+            waveform = waveform * 2 - 1  # scale to [-1, 1]
 
         self.left_samples[:] = waveform
         self.right_samples[:] = waveform
         self.top_canvas.update()
         self.bottom_canvas.update()
+
 
 
 
