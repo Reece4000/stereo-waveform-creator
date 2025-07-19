@@ -2,4 +2,4 @@ A simple tool for creating mono and stereo single cycle waveforms for use in har
 
 Supports exporting to wav, loading of existing wav files from disk, and a variety of basic functions such as normalisation, inversion etc. Includes a few presets for common waveforms.
 
-<img width="913" height="696" alt="image" src="https://github.com/user-attachments/assets/240e505f-e12d-4c65-b2a4-ce7fcba6b617" />
+<img width="887" height="705" alt="image" src="https://github.com/user-attachments/assets/befc1a66-c8df-4112-8ca2-4946fbfba397" />
