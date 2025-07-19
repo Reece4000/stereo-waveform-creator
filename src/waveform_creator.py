@@ -6,6 +6,7 @@ import wave
 import struct
 
 
+
 def show_error_dialog(parent, message, title="Error"):
     msg_box = QMessageBox(parent)
     msg_box.setIcon(QMessageBox.Critical)
@@ -33,8 +34,8 @@ class WaveformCreator(QWidget):
         self.num_samples = 674  # C2
         self.left_samples = np.zeros(self.num_samples, dtype=np.float32)
         self.right_samples = np.zeros(self.num_samples, dtype=np.float32)
-        self.top_canvas = WaveformCanvas(self.left_samples, "left", self.left_changed, color=(150, 80, 80))
-        self.bottom_canvas = WaveformCanvas(self.right_samples, "right", self.right_changed, color=(70, 140, 140))
+        self.top_canvas = WaveformCanvas(self.left_samples, "left", self.left_changed, color=(255, 120, 120))
+        self.bottom_canvas = WaveformCanvas(self.right_samples, "right", self.right_changed, color=(120, 240, 240))
         mid_controls_layout = QHBoxLayout()
 
         def add_btn(label, callback):

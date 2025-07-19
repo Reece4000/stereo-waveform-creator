@@ -4,7 +4,14 @@ from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QPainter, QColor, QPen, QAction 
 
 
-class WaveformCanvas(QFrame):
+CANVAS_COLOR = QColor(0, 0, 0, 255)
+GRIDLINES_COLOR = QColor(255, 255, 255, 50)
+AXIS_COLOR = QColor(255, 255, 255, 50)
+LABELS_COLOR = QColor(255, 255, 255, 255)
+
+
+class WaveformCanvas(QFrame):   
+
     def __init__(self, samples, channel, callback=None, color=(30, 30, 30)):
         super().__init__()
         self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -23,14 +30,14 @@ class WaveformCanvas(QFrame):
         menu = QMenu(self)
 
         options = {
-            "Copy samples to other channel": self.copy_to_other_channel,
-            "Clear channel": self.clear_channel,
-            "Rectify channel": self.rectify_channel,
-            "Invert channel": self.invert_channel,
-            "Normalise channel": self.normalise_channel,
-            "Remove DC offset from channel": self.remove_dc_offset,
-            "Fuzz channel": self.fuzz_channel,
-            "Randomise channel": self.randomise_channel,
+            "Copy to other channel": self.copy_to_other_channel,
+            "Clear": self.clear_channel,
+            "Rectify": self.rectify_channel,
+            "Invert": self.invert_channel,
+            "Normalise": self.normalise_channel,
+            "Remove DC offset": self.remove_dc_offset,
+            "Fuzz": self.fuzz_channel,
+            "Randomise": self.randomise_channel,
         }
 
         for text, callback in options.items():
@@ -68,6 +75,9 @@ class WaveformCanvas(QFrame):
 
     def remove_dc_offset(self):
         self.samples -= np.mean(self.samples)
+        peak = np.max(np.abs(self.samples))
+        if peak > 1.0:
+            self.samples /= peak 
         self.update()
 
     def fuzz_channel(self):
@@ -110,9 +120,9 @@ class WaveformCanvas(QFrame):
         plot_height = h - margin_bottom - margin_top
         mid_y = margin_top + plot_height // 2
 
-        painter.fillRect(self.rect(), QColor(120, 120, 120, 127))  # bg
+        painter.fillRect(self.rect(), CANVAS_COLOR)  # bg
 
-        grid_pen = QPen(QColor(80, 80, 80, 100), 1, Qt.DashLine)
+        grid_pen = QPen(GRIDLINES_COLOR, 1, Qt.DashLine)
         painter.setPen(grid_pen)
         
         # Y gridlines at -1.0, -0.5, 0.0, 0.5, 1.0
@@ -128,13 +138,13 @@ class WaveformCanvas(QFrame):
             painter.drawLine(x, margin_top, x, h - margin_bottom)
 
         # --- Axes ---
-        axis_pen = QPen(QColor(40, 40, 40), 2)
+        axis_pen = QPen(AXIS_COLOR)
         painter.setPen(axis_pen)
         painter.drawLine(margin_left, margin_top, margin_left, h - margin_bottom)  # Y-axis
         painter.drawLine(margin_left, mid_y, w, mid_y)  # X-axis (centre)
 
         # --- Labels ---
-        painter.setPen(QColor(20, 20, 20))
+        painter.setPen(LABELS_COLOR)
 
         right_padding = 5  
         font_metrics = painter.fontMetrics()

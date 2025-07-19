@@ -5,20 +5,21 @@ QWidget {
 
 QPushButton {
     padding-right: 40px;
-    background-color: #0a3945;
+    background-color: #004d5c;
     color: white;
     border-radius: 4px;
     padding: 5px;
-    border: 1px solid #8cb1c7ff;
+    height: 20px;
+    border: 1px solid #002129;
     font-weight: bold;
 }
 
 QPushButton:hover { 
-    background-color: #0e5466;
+    background-color: #00738a;
 }
 
 QPushButton:pressed { 
-    background-color: #002129;
+    background-color: #011021;
 }
 
 QPushButton::menu-indicator {
@@ -53,9 +54,7 @@ QComboBox QAbstractItemView::item:hover {
 }
 
 WaveformCanvas {
-    background-color: #ffffff;
-    border-top: 2px solid #b05a5a;  /* muted red */
-    border-bottom: 2px solid #5a7ab0;  /* muted blue */
+    background-color: #000000;
 }
 
 QMenu {
