@@ -1,4 +1,4 @@
-A simple tool for creating mono and stereo single cycle waveforms for use in hardware or software samplers.
+A tool for creating mono and stereo single cycle waveforms for use in hardware or software samplers.
 
 Supports exporting to wav, loading of existing wav files from disk, and a variety of basic functions such as normalisation, inversion etc. Includes a few presets for common waveforms.
 
